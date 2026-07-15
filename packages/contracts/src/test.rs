@@ -1,7 +1,7 @@
 #![cfg(test)]
 
 use super::*;
-use soroban_sdk::{testutils::Address as _, vec, Address, BytesN, Env, IntoVal};
+use soroban_sdk::{testutils::Address as _, Address, BytesN, Env};
 
 #[test]
 fn test_register_audit() {
@@ -19,7 +19,7 @@ fn test_register_audit() {
     let audit_id = client.register_audit(&auditor, &contract_addr, &report_hash, &85);
 
     // Verify the audit exists
-    assert_eq!(client.verify_audit(&audit_id), true);
+    assert!(client.verify_audit(&audit_id));
 
     // Check count
     assert_eq!(client.get_audit_count(), 1);
@@ -91,7 +91,7 @@ fn test_verify_nonexistent_audit_returns_false() {
     let fake_id = BytesN::from_array(&env, &[0u8; 32]);
 
     // verify_audit now returns false instead of panicking
-    assert_eq!(client.verify_audit(&fake_id), false);
+    assert!(!client.verify_audit(&fake_id));
 }
 
 #[test]

@@ -69,7 +69,7 @@ impl AuditRegistry {
             auditor.clone(),
             security_score,
         );
-        let xdr_bytes: Bytes = payload.to_xdr(&env).into();
+        let xdr_bytes: Bytes = payload.to_xdr(&env);
         let audit_id = env.crypto().sha256(&xdr_bytes);
 
         // Ensure audit doesn't already exist

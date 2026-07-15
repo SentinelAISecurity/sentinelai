@@ -2,6 +2,7 @@
 use soroban_sdk::{
     contract, contractimpl, contracttype, symbol_short, vec, Address, Bytes, BytesN, Env, Vec,
 };
+use soroban_sdk::xdr::ToXdr;
 
 /// Key for storing records in persistent/instance storage
 #[contracttype]
@@ -60,7 +61,17 @@ impl AuditRegistry {
 
         let timestamp = env.ledger().timestamp();
 
-        // Build the audit record first, then hash its XDR for the audit ID
+        // Generate audit ID via SHA-256 of individually XDR-serialized fields.
+        // #[contracttype] does NOT implement ToXdr, but individual SDK types do.
+        let mut payload = Bytes::new(&env);
+        payload.append(&contract_address.to_xdr(&env));
+        payload.append(&report_hash.to_xdr(&env));
+        payload.append(&timestamp.to_xdr(&env));
+        payload.append(&auditor.to_xdr(&env));
+        payload.append(&security_score.to_xdr(&env));
+        let audit_id = env.crypto().sha256(&payload);
+
+        // Build the audit record for storage
         let record = AuditRecord {
             contract_address: contract_address.clone(),
             report_hash: report_hash.clone(),
@@ -68,11 +79,6 @@ impl AuditRegistry {
             auditor: auditor.clone(),
             security_score,
         };
-
-        // Generate audit ID via SHA-256 of the XDR-serialized record
-        // #[contracttype] guarantees ToXdr is implemented
-        let xdr_bytes: Bytes = record.to_xdr(&env);
-        let audit_id = env.crypto().sha256(&xdr_bytes);
 
         // Ensure audit doesn't already exist
         let record_key = StorageKey::AuditRecord(audit_id.clone());

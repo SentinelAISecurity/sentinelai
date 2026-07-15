@@ -1,7 +1,7 @@
 #![no_std]
 use soroban_sdk::{
     contract, contractimpl, contracttype, symbol_short, vec, Address, Bytes, BytesN, Env,
-    IntoVal, TryIntoVal, Val, Vec,
+    IntoVal, TryIntoVal, Vec,
 };
 use soroban_sdk::xdr::{ScVal, ToXdr};
 
@@ -100,7 +100,7 @@ impl AuditRegistry {
             .storage()
             .persistent()
             .get(&contract_key)
-            .unwrap_or(vec![&env]);
+            .unwrap_or_else(|| vec![&env]);
 
         audits.push_back(audit_id.clone());
         env.storage().persistent().set(&contract_key, &audits);
@@ -149,7 +149,7 @@ impl AuditRegistry {
         env.storage()
             .persistent()
             .get(&contract_key)
-            .unwrap_or(vec![&env])
+            .unwrap_or_else(|| vec![&env])
     }
 
     /// Get the total count of registered audits.
@@ -165,7 +165,7 @@ impl AuditRegistry {
             .storage()
             .persistent()
             .get(&contract_key)
-            .unwrap_or(vec![&env]);
+            .unwrap_or_else(|| vec![&env]);
         audits.len()
     }
 }

@@ -1,7 +1,6 @@
 #![no_std]
 use soroban_sdk::{
     contract, contractimpl, contracttype, symbol_short, vec, Address, Bytes, BytesN, Env, Vec,
-    xdr::ToXdr,
 };
 
 /// Key for storing records in persistent/instance storage
@@ -61,23 +60,7 @@ impl AuditRegistry {
 
         let timestamp = env.ledger().timestamp();
 
-        // Generate a unique audit ID using SHA-256 of XDR-serialized inputs
-        let payload = (
-            contract_address.clone(),
-            report_hash.clone(),
-            timestamp,
-            auditor.clone(),
-            security_score,
-        );
-        let xdr_bytes: Bytes = payload.to_xdr(&env);
-        let audit_id = env.crypto().sha256(&xdr_bytes);
-
-        // Ensure audit doesn't already exist
-        let record_key = StorageKey::AuditRecord(audit_id.clone());
-        let exists: bool = env.storage().persistent().get(&record_key).is_some();
-        assert!(!exists, "Audit already exists");
-
-        // Create and store the audit record
+        // Build the audit record first, then hash its XDR for the audit ID
         let record = AuditRecord {
             contract_address: contract_address.clone(),
             report_hash: report_hash.clone(),
@@ -86,6 +69,16 @@ impl AuditRegistry {
             security_score,
         };
 
+        // Generate audit ID via SHA-256 of the XDR-serialized record
+        // #[contracttype] guarantees ToXdr is implemented
+        let xdr_bytes: Bytes = record.to_xdr(&env);
+        let audit_id = env.crypto().sha256(&xdr_bytes);
+
+        // Ensure audit doesn't already exist
+        let record_key = StorageKey::AuditRecord(audit_id.clone());
+        assert!(!env.storage().persistent().has(&record_key), "Audit already exists");
+
+        // Store the record
         env.storage().persistent().set(&record_key, &record);
 
         // Update contract-level audit list
@@ -107,7 +100,7 @@ impl AuditRegistry {
         // Emit event
         env.events().publish(
             (
-                symbol_short!("audit_reg"),
+                symbol_short!("audit"),
                 contract_address,
                 auditor,
                 record.security_score,
@@ -123,7 +116,7 @@ impl AuditRegistry {
     /// Returns `false` if the audit does not exist (does NOT panic).
     pub fn verify_audit(env: Env, audit_id: BytesN<32>) -> bool {
         let record_key = StorageKey::AuditRecord(audit_id);
-        env.storage().persistent().get::<StorageKey, AuditRecord>(&record_key).is_some()
+        env.storage().persistent().has(&record_key)
     }
 
     /// Retrieve an audit record by its ID.

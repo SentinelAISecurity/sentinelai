@@ -223,7 +223,7 @@ describe("ReportGenerator", () => {
       const report = generator.generateReport(audit, ReportFormat.MARKDOWN);
 
       expect(report.content).toContain("Add access control");
-      expect(report.content).toContain("```solidity");
+      expect(report.content).toContain("```rust");
     });
 
     it("should set correct metadata", () => {

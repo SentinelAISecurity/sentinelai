@@ -3,7 +3,7 @@ Reentrancy Vulnerability Scanner Plugin for SentinelAI.
 
 Detects:
 - External calls before state updates (violation of Checks-Effects-Interactions pattern)
-- Missing ReentrancyGuard from OpenZeppelin
+- Missing SorobanAuth from Stellar
 - Read-only reentrancy (view functions that could be exploited)
 - Cross-function reentrancy between public functions
 """
@@ -30,12 +30,12 @@ class ReentrancyScanner:
         r'\.delegatecall\(',
     ]
 
-    REENTRANCY_GUARD_IMPORT = "import.*ReentrancyGuard"
+    REENTRANCY_GUARD_IMPORT = "import.*SorobanAuth"
     REENTRANCY_MODIFIER = "nonReentrant"
 
     def analyze(self, source_code: str) -> Dict[str, Any]:
         """
-        Analyze a Solidity smart contract for reentrancy vulnerabilities.
+        Analyze a Soroban/Stellar smart contract for reentrancy vulnerabilities.
 
         Args:
             source_code: The Rust/Soroban source code to analyze
@@ -47,10 +47,10 @@ class ReentrancyScanner:
         warnings = []
         lines = source_code.split("\n")
 
-        # Check for missing ReentrancyGuard
+        # Check for missing SorobanAuth
         if not re.search(self.REENTRANCY_GUARD_IMPORT, source_code):
             warnings.append(
-                "No ReentrancyGuard import found. Consider using OpenZeppelin's ReentrancyGuard."
+                "No SorobanAuth import found. Consider using Stellar's SorobanAuth."
             )
 
         # Check each function for reentrancy patterns
@@ -118,12 +118,12 @@ class ReentrancyScanner:
                         "severity": "CRITICAL",
                         "category": "reentrancy",
                         "lineNumbers": self._get_line_numbers(body_lines, match.span()),
-                        "fileName": "contract.sol",
+                        "fileName": "contract.rs",
                         "functionName": func["name"],
                         "vulnerableCode": self._get_vulnerable_snippet(body_lines, match.span()),
                         "fixedCode": self._generate_fix(func["name"], body_lines),
                         "references": [
-                            "https://docs.openzeppelin.com/contracts/4.x/api/security#ReentrancyGuard",
+                            "https://soroban.stellar.org/docs",
                             "https://consensys.github.io/smart-contract-best-practices/attacks/reentrancy/",
                         ],
                         "confidence": 0.9,
@@ -155,12 +155,12 @@ class ReentrancyScanner:
                     "severity": "MEDIUM",
                     "category": "reentrancy",
                     "lineNumbers": [self._get_line_number(lines, source_code[:match.start()])],
-                    "fileName": "contract.sol",
+                    "fileName": "contract.rs",
                     "functionName": func_name,
                     "vulnerableCode": "",
                     "fixedCode": "",
                     "references": [
-                        "https://blog.openzeppelin.com/read-only-reentrancy-in-the-age-of-ethereum-merge/",
+                        "https://developers.stellar.org/docs",
                     ],
                     "confidence": 0.6,
                     "detectedBy": "reentrancy-scanner",
@@ -239,7 +239,7 @@ class ReentrancyScanner:
         """Return remediation recommendations."""
         return [
             "Always follow the Checks-Effects-Interactions pattern",
-            "Use OpenZeppelin's ReentrancyGuard for functions making external calls",
+            "Use Stellar's SorobanAuth for functions making external calls",
             "Avoid using low-level calls when possible",
             "Use Soroban's authorization framework to control cross-contract calls",
         ]

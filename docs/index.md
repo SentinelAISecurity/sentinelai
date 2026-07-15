@@ -19,7 +19,7 @@ hero:
 features:
   - icon: 🔍
     title: Smart Contract Analysis
-    details: Upload Solidity files, analyze GitHub repos, or scan deployed contracts for 15+ vulnerability types.
+    details: Upload Soroban contracts, analyze GitHub repos, or scan deployed contracts for 15+ vulnerability types.
   - icon: 🤖
     title: AI-Powered Insights
     details: Get plain-English explanations, exploit scenarios, and secure fix suggestions from the AI engine.

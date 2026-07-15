@@ -5,7 +5,7 @@ A SentinelAI security scanner plugin that detects reentrancy vulnerabilities in 
 ## Features
 
 - Detects CEI (Checks-Effects-Interactions) pattern violations
-- Identifies missing OpenZeppelin ReentrancyGuard usage
+- Identifies missing Stellar SorobanAuth usage
 - Detects read-only reentrancy vulnerabilities
 - Cross-function reentrancy analysis
 - Provides secure fix suggestions
@@ -15,7 +15,7 @@ A SentinelAI security scanner plugin that detects reentrancy vulnerabilities in 
 | Pattern | Detected | Confidence |
 |---------|----------|------------|
 | External call before state update | ✅ | High |
-| Missing ReentrancyGuard | ✅ | High |
+| Missing SorobanAuth | ✅ | High |
 | Low-level .call usage | ✅ | Medium |
 | Read-only reentrancy | ✅ | Medium |
 | Cross-function reentrancy | ✅ | Low |

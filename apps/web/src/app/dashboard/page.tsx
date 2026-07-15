@@ -55,7 +55,7 @@ const stats = [
 const recentAudits = [
   {
     id: "audit_001",
-    name: "TokenVault.sol",
+    name: "token_vault.rs",
     type: "DeFi",
     status: "completed",
     score: 65,
@@ -64,7 +64,7 @@ const recentAudits = [
   },
   {
     id: "audit_002",
-    name: "StakingPool.sol",
+    name: "staking_pool.rs",
     type: "Staking",
     status: "completed",
     score: 88,
@@ -73,7 +73,7 @@ const recentAudits = [
   },
   {
     id: "audit_003",
-    name: "NFTMarketplace.sol",
+    name: "nft_marketplace.rs",
     type: "NFT",
     status: "completed",
     score: 75,

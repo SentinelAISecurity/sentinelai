@@ -112,11 +112,15 @@ async def run_audit(
         "severity": "CRITICAL",
         "category": "reentrancy",
         "lineNumbers": [45, 46, 47],
-        "fileName": "contract.sol",
+        "fileName": "contract.rs",
         "functionName": "withdraw",
-        "vulnerableCode": "function withdraw() external { (bool success,) = msg.sender.call{value: balance}(''); require(success); balance = 0; }",
-        "fixedCode": "function withdraw() external nonReentrant { uint256 amount = balance; balance = 0; (bool success,) = msg.sender.call{value: amount}(''); require(success); }",
-        "references": ["https://docs.openzeppelin.com/contracts/4.x/api/security#ReentrancyGuard"],
+        "vulnerableCode": "function withdraw(xlm_amount: i128) -> Result<(), Error> {",
+        "fixedCode": "function withdraw(xlm_amount: i128) -> Result<(), Error> {
+    let amount = env.storage().instance().get(&DataKey::Balance)?.unwrap_or(0);
+    env.storage().instance().set(&DataKey::Balance, &(amount - xlm_amount));
+    // Then transfer XLM
+}",
+        "references": ["https://soroban.stellar.org/docs"],
         "cvssScore": 9.8,
         "exploitabilityScore": 9.0,
         "confidence": 0.95,
@@ -141,13 +145,13 @@ async def run_audit(
         recommendations=[
             {
                 "id": "rec_001",
-                "title": "Implement ReentrancyGuard",
-                "description": "Use OpenZeppelin's ReentrancyGuard to prevent reentrancy attacks.",
+                "title": "Soroban Authorization",
+                "description": "Use Stellar authorization framework to prevent unauthorized access.",
                 "severity": "CRITICAL",
                 "category": "reentrancy",
-                "codeSnippet": "import '@openzeppelin/contracts/security/ReentrancyGuard.sol';",
+                "codeSnippet": "use soroban_sdk::Address;",
                 "fixedCodeSnippet": "function withdraw() external nonReentrant { ... }",
-                "references": ["https://docs.openzeppelin.com/contracts/4.x/api/security#ReentrancyGuard"],
+                "references": ["https://soroban.stellar.org/docs"],
             }
         ],
         gasAnalysis={

@@ -224,7 +224,7 @@ Category: ${variables.category}
 Description: ${variables.description}
 
 Vulnerable Code:
-\`\`\`solidity
+\`\`\`rust
 ${variables.code}
 \`\`\`
 
@@ -251,7 +251,7 @@ Category: ${variables.category}
 Description: ${variables.description}
 
 Vulnerable Code:
-\`\`\`solidity
+\`\`\`rust
 ${variables.code}
 \`\`\``,
       },

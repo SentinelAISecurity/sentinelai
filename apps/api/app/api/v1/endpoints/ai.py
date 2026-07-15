@@ -30,7 +30,7 @@ async def ai_analyze(
             ],
             "overallScore": 65,
             "recommendations": [
-                "Implement ReentrancyGuard",
+                "Implement SorobanAuth",
                 "Add proper access control modifiers",
             ],
         },
@@ -64,7 +64,7 @@ async def ai_explain(
         "plainEnglish": "This vulnerability allows an attacker to repeatedly call the withdraw function before the balance is updated, draining all funds.",
         "exploitScenario": "An attacker deploys a malicious contract that calls withdraw() in its receive() function, creating a recursive loop.",
         "impact": "Complete draining of contract funds.",
-        "remediation": "Move the balance update before the external call, or use OpenZeppelin's ReentrancyGuard.",
+        "remediation": "Move the balance update before the external call, or use Stellar's SorobanAuth.",
         "secureExample": "function withdraw() external nonReentrant { uint256 amount = balance; balance = 0; (bool success,) = msg.sender.call{value: amount}(''); require(success); }",
         "confidence": 0.95,
     }
@@ -80,7 +80,7 @@ async def ai_suggest_fix(
         "vulnerabilityId": vulnerability.get("id", ""),
         "originalCode": vulnerability.get("vulnerableCode", ""),
         "fixedCode": "function withdraw() external nonReentrant {\n    uint256 amount = balance;\n    balance = 0;\n    (bool success,) = msg.sender.call{value: amount}('');\n    require(success, 'Transfer failed');\n}",
-        "explanation": "Added ReentrancyGuard modifier and moved state update before external call (Checks-Effects-Interactions pattern).",
+        "explanation": "Added SorobanAuth modifier and moved state update before external call (Checks-Effects-Interactions pattern).",
         "tradeoffs": ["Slightly higher gas cost due to mutex"],
         "bestPractices": ["Always follow Checks-Effects-Interactions pattern", "Use established security libraries"],
     }

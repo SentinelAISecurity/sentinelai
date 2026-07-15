@@ -250,7 +250,7 @@ alerts
 - XSS prevention via output encoding
 
 ### Smart Contract Security
-- Follow OpenZeppelin standards
+- Follow Stellar standards
 - Comprehensive test suite with Foundry
 - Formal verification (planned)
 - Upgradable patterns where appropriate

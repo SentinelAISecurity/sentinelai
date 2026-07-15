@@ -224,7 +224,7 @@ pnpm test --filter=@sentinelai/scanners
 # Run Python tests
 cd apps/api && pytest
 
-# Run Solidity tests
+# Run contract tests
 cd packages/contracts && forge test -vvv
 
 # Run with coverage

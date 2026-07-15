@@ -40,7 +40,7 @@
 
 SentinelAI is a **production-ready, open-source platform** that helps developers secure their smart contracts throughout the entire lifecycle — from development to post-deployment monitoring.
 
-> Designed similarly to projects like Trivy, OWASP ZAP, Slither, and OpenZeppelin — with a modular plugin architecture that encourages community contributions.
+> Designed similarly to projects like Trivy, OWASP ZAP, Slither, and Stellar — with a modular plugin architecture that encourages community contributions.
 
 ### Why SentinelAI?
 
@@ -182,7 +182,7 @@ uvicorn main:app --reload --port 8000
 cd packages/contracts
 
 # Install dependencies
-forge install OpenZeppelin/openzeppelin-contracts
+forge install Stellar/stellar-contracts
 
 # Build contracts
 forge build
@@ -225,7 +225,7 @@ sentinelai/
 │   ├── report-generator/       # Report generation
 │   ├── sdk/                    # JavaScript/TypeScript SDK
 │   ├── ui/                     # Shared UI components
-│   └── contracts/              # Solidity smart contracts
+│   └── contracts/              # Soroban Rust smart contracts
 │
 ├── plugins/                    # Security scanner plugins
 │   ├── reentrancy/             # Reentrancy detection
@@ -285,7 +285,7 @@ def create_plugin():
   "author": "Your Name",
   "severity": "HIGH",
   "entryPoint": "scanner.py",
-  "targets": ["solidity"]
+  "targets": ["Soroban"]
 }
 ```
 
@@ -316,7 +316,7 @@ curl -X POST http://localhost:8000/api/v1/audits \
   -d '{
     "contractId": "contract_001",
     "type": "file_upload",
-    "sourceCode": "pragma solidity ^0.8.0; ..."
+    "sourceCode": "pragma Soroban ^0.8.0; ..."
   }'
 ```
 
@@ -335,7 +335,7 @@ Full API documentation available at `http://localhost:8000/api/docs`
 
 The AuditRegistry contract stores audit proofs on-chain for immutable verification.
 
-```solidity
+```rust
 function registerAudit(
     address contractAddress,
     bytes32 reportHash,

@@ -58,7 +58,7 @@ Encrypt your message using our PGP key:
 - XSS prevention (output encoding)
 
 ### Smart Contract Security
-- OpenZeppelin contracts audited
+- Stellar contracts audited
 - Comprehensive unit tests
 - Invariant testing
 - Gas optimization

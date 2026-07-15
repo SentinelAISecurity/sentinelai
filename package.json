@@ -11,7 +11,7 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:cov": "turbo run test:cov",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json,py,sol}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,py,rs}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,py,sol}\"",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
     "prepare": "husky install",
@@ -32,7 +32,6 @@
     "@changesets/cli": "^2.27.7",
     "husky": "^9.1.4",
     "prettier": "^3.3.3",
-    "prettier-plugin-solidity": "^1.3.1",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "turbo": "^2.0.9",
     "typescript": "^5.5.4"

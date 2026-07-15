@@ -42,7 +42,7 @@ This report contains the results of an automated security audit conducted by Sen
 
 ### 🔴 Reentrancy Vulnerability
 
-**Severity:** CRITICAL | **Category:** reentrancy | **File:** contract.sol
+**Severity:** CRITICAL | **Category:** reentrancy | **File:** contract.rs
 
 The withdraw function is vulnerable to reentrancy attacks because it sends XLM before updating the state.
 
@@ -75,9 +75,9 @@ function withdraw() external nonReentrant {
 
 ## 📝 Recommendations
 
-### Implement ReentrancyGuard
+### Soroban Authorization
 
-Use OpenZeppelin's ReentrancyGuard to prevent reentrancy attacks.
+Use Stellar authorization framework to prevent reentrancy attacks.
 
 ---
 

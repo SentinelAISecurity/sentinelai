@@ -21,12 +21,19 @@ export function isValidEthereumAddress(address: string): boolean {
 /** @deprecated Use isValidStellarTxHash instead */
 export const isValidTxHash = isValidStellarTxHash;
 
-export function isValidSoliditySource(source: string): boolean {
+export function isValidSorobanSource(source: string): boolean {
   if (!source || source.trim().length === 0) return false;
 
+  const rustKeywords = ["fn ", "pub fn ", "struct ", "impl ", "use soroban_sdk", "#!["];
+  return rustKeywords.some((kw) => source.includes(kw));
+}
+
+/** @deprecated Use isValidSorobanSource instead */
+export const isValidSoliditySource = (source: string): boolean => {
+  if (!source || source.trim().length === 0) return false;
   const solidityKeywords = ["pragma solidity", "contract ", "interface ", "library "];
   return solidityKeywords.some((kw) => source.includes(kw));
-}
+};
 
 export function isValidIPFSHash(hash: string): boolean {
   return /^Qm[1-9A-HJ-NP-Za-km-z]{44}$/.test(hash) || /^b[a-z2-7]{58}$/.test(hash);

@@ -6,8 +6,8 @@ import { Card, CardHeader, CardContent } from "@sentinelai/ui";
 const auditModes = [
   {
     icon: Upload,
-    title: "Upload Solidity File",
-    description: "Upload a .sol file for comprehensive static analysis and AI-powered vulnerability detection.",
+    title: "Upload Soroban Contract",
+    description: "Upload a .rs file for comprehensive static analysis and AI-powered vulnerability detection.",
     action: "Upload File",
     href: "/audits/new?mode=upload",
     color: "text-blue-400",
@@ -16,7 +16,7 @@ const auditModes = [
   {
     icon: Terminal,
     title: "Paste Source Code",
-    description: "Paste Solidity code directly into the editor for instant analysis and fix suggestions.",
+    description: "Paste Rust/Soroban code directly into the editor for instant analysis and fix suggestions.",
     action: "Paste Code",
     href: "/audits/new?mode=paste",
     color: "text-purple-400",

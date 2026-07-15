@@ -55,7 +55,7 @@ class Settings(BaseSettings):
 
     # File Upload
     MAX_UPLOAD_SIZE_MB: int = 10
-    ALLOWED_EXTENSIONS: List[str] = [".sol", ".json", ".abi"]
+    ALLOWED_EXTENSIONS: List[str] = [".rs", ".wasm", ".json", ".abi"]
 
     # Rate Limiting
     RATE_LIMIT_ENABLED: bool = True

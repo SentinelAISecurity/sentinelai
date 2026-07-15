@@ -43,8 +43,8 @@ async def upload_contract_file(
     current_user: User = Depends(require_auth),
 ):
     """Upload a Soroban/Wasm file for contract analysis."""
-    if not file.filename or not (file.filename.endswith(".sol") or file.filename.endswith(".rs") or file.filename.endswith(".wasm")):
-        raise HTTPException(status_code=400, detail="Only .sol, .rs, or .wasm files are allowed")
+    if not file.filename or not (file.filename.endswith(".rs") or file.filename.endswith(".wasm")):
+        raise HTTPException(status_code=400, detail="Only .rs or .wasm files are allowed")
 
     content = await file.read()
     source_code = content.decode("utf-8")

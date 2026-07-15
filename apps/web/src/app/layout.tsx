@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   keywords: [
     "smart contract audit",
     "web3 security",
-    "solidity scanner",
+    "soroban scanner",
     "blockchain security",
     "vulnerability detection",
     "AI security",

@@ -97,7 +97,7 @@ async def list_plugins(
                 "name": "Gas Optimizer",
                 "version": "1.0.0",
                 "type": "scanner",
-                "description": "Identifies gas optimization opportunities in Solidity code",
+                "description": "Identifies optimization opportunities in Soroban/Rust contracts",
                 "author": "SentinelAI",
                 "severity": "GAS",
                 "isBuiltIn": True,

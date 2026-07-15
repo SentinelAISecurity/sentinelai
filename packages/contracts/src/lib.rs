@@ -1,8 +1,9 @@
 #![no_std]
 use soroban_sdk::{
-    contract, contractimpl, contracttype, symbol_short, vec, Address, Bytes, BytesN, Env, Vec,
+    contract, contractimpl, contracttype, symbol_short, vec, Address, Bytes, BytesN, Env,
+    IntoVal, TryIntoVal, Val, Vec,
 };
-use soroban_sdk::xdr::ToXdr;
+use soroban_sdk::xdr::{ScVal, ToXdr};
 
 /// Key for storing records in persistent/instance storage
 #[contracttype]
@@ -61,14 +62,20 @@ impl AuditRegistry {
 
         let timestamp = env.ledger().timestamp();
 
-        // Generate audit ID via SHA-256 of individually XDR-serialized fields.
-        // #[contracttype] does NOT implement ToXdr, but individual SDK types do.
-        let mut payload = Bytes::new(&env);
-        payload.append(&contract_address.to_xdr(&env));
-        payload.append(&report_hash.to_xdr(&env));
-        payload.append(&timestamp.to_xdr(&env));
-        payload.append(&auditor.to_xdr(&env));
-        payload.append(&security_score.to_xdr(&env));
+        // Generate audit ID via SHA-256 of the ScVal-serialized tuple.
+        // Individual SDK types don't implement ToXdr; we convert through ScVal.
+        let tuple_scval: ScVal = (
+            contract_address.clone(),
+            report_hash.clone(),
+            timestamp,
+            auditor.clone(),
+            security_score,
+        )
+            .into_val(&env)
+            .try_into_val(&env)
+            .unwrap();
+        let xdr_bytes = tuple_scval.to_xdr().unwrap();
+        let payload = Bytes::from_slice(&env, &xdr_bytes);
         let audit_id = env.crypto().sha256(&payload);
 
         // Build the audit record for storage

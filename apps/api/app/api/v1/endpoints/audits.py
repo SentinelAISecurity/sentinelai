@@ -13,7 +13,7 @@ from app.schemas.audit import (
     AuditResponse,
     AuditResultResponse,
 )
-from app.api.v1.endpoints.ai import ai_router
+# AI router is registered directly in the main router
 
 router = APIRouter()
 
@@ -114,12 +114,8 @@ async def run_audit(
         "lineNumbers": [45, 46, 47],
         "fileName": "contract.rs",
         "functionName": "withdraw",
-        "vulnerableCode": "function withdraw(xlm_amount: i128) -> Result<(), Error> {",
-        "fixedCode": "function withdraw(xlm_amount: i128) -> Result<(), Error> {
-    let amount = env.storage().instance().get(&DataKey::Balance)?.unwrap_or(0);
-    env.storage().instance().set(&DataKey::Balance, &(amount - xlm_amount));
-    // Then transfer XLM
-}",
+        "vulnerableCode": "pub fn withdraw(env: Env, amount: i128) -> Result<(), Error> {",
+        "fixedCode": "pub fn withdraw(env: Env, amount: i128) -> Result<(), Error> {\n    let balance = env.storage().instance().get(&DataKey::Balance)?.unwrap_or(0);\n    env.storage().instance().set(&DataKey::Balance, &(balance - amount));\n    // Then transfer XLM\n}",
         "references": ["https://soroban.stellar.org/docs"],
         "cvssScore": 9.8,
         "exploitabilityScore": 9.0,

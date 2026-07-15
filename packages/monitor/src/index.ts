@@ -74,7 +74,7 @@ class StellarHorizonClient {
     if (!res.ok) {
       throw new Error(`Horizon error (${res.status}): ${await res.text()}`);
     }
-    return res.json();
+    return res.json() as Promise<HorizonAccountResponse>;
   }
 
   async fetchOperations(
@@ -97,7 +97,7 @@ class StellarHorizonClient {
     if (!res.ok) {
       throw new Error(`Horizon error (${res.status}): ${await res.text()}`);
     }
-    const body: HorizonOperationsResponse = await res.json();
+    const body = await res.json() as HorizonOperationsResponse;
     return body._embedded.records;
   }
 
@@ -115,7 +115,7 @@ class StellarHorizonClient {
     if (!res.ok) {
       throw new Error(`Horizon error (${res.status}): ${await res.text()}`);
     }
-    const body: HorizonTransactionsResponse = await res.json();
+    const body = await res.json() as HorizonTransactionsResponse;
     return body._embedded.records;
   }
 
@@ -612,7 +612,7 @@ export class ContractMonitor {
 }
 
 export type {
-  MonitorConfig,
+  Monitor as MonitorConfig,
   MonitorRule,
   MonitorRuleType,
   MonitorEvent,

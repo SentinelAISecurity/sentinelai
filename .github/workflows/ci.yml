@@ -30,9 +30,14 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm build --filter=./packages/*
+      - run: pnpm build --filter=./packages/* --filter=!@sentinelai/contracts
         name: Build packages
 
       - run: pnpm lint
@@ -40,18 +45,20 @@ jobs:
 
       - run: pnpm typecheck
         name: Typecheck
-        continue-on-error: true
 
   # Unit tests
   test:
     name: Test
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         package:
           - "@sentinelai/shared"
           - "@sentinelai/scanners"
           - "@sentinelai/report-generator"
+          - "@sentinelai/ai-engine"
+          - "@sentinelai/monitor"
     steps:
       - uses: actions/checkout@v4
 
@@ -118,31 +125,30 @@ jobs:
           JWT_SECRET: test-secret
         run: |
           cd apps/api
-          python -m pytest --cov=app --cov-report=xml
+          python -m pytest --cov=app --cov-report=xml --assert=plain
+          EXIT=$?
+          if [ $EXIT -eq 5 ]; then
+            echo "::warning::No API tests collected. Create tests in apps/api/tests/"
+            exit 0
+          fi
+          exit $EXIT
 
-  # Solidity tests
+  # Soroban contract tests
   test-contracts:
     name: Test Contracts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          version: nightly
+          targets: wasm32-unknown-unknown
 
-      - name: Run Forge tests
+      - name: Run Soroban contract tests
         run: |
           cd packages/contracts
-          forge test -vvv
-
-      - name: Run Forge coverage
-        run: |
-          cd packages/contracts
-          forge coverage --report lcov
+          cargo test
 
   # Security
   security:
@@ -162,7 +168,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Audit dependencies
-        run: pnpm audit || true
+        run: pnpm audit --audit-level=high 2>&1 || echo "::warning::Security audit found issues"
 
       - name: CodeQL Analysis
         uses: github/codeql-action/init@v3

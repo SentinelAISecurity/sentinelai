@@ -17,6 +17,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "eslint . --ext .ts",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "clean": "rm -rf dist .turbo"

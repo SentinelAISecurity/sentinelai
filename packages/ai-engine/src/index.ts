@@ -166,7 +166,18 @@ export class AIEngine {
         throw new Error(`AI provider error (${response.status}): ${errorText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as {
+        choices?: Array<{
+          message?: { content?: string };
+          finish_reason?: string;
+        }>;
+        model?: string;
+        usage?: {
+          prompt_tokens?: number;
+          completion_tokens?: number;
+          total_tokens?: number;
+        };
+      };
       const duration = Date.now() - startTime;
 
       return {

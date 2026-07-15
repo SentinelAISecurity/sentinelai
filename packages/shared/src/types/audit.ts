@@ -1,3 +1,6 @@
+import type { Vulnerability } from "./vulnerability";
+import type { AIInsights } from "./ai";
+
 // Audits
 export enum AuditStatus {
   PENDING = "pending",

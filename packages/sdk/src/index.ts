@@ -198,10 +198,11 @@ export class SentinelAIClient {
       headers,
     });
 
-    const json = await response.json();
+    const json = await response.json() as Record<string, unknown>;
 
     if (!response.ok) {
-      throw new Error(json.error?.message ?? `Request failed with status ${response.status}`);
+      const error = json.error as { message?: string } | undefined;
+      throw new Error(error?.message ?? `Request failed with status ${response.status}`);
     }
 
     return json as T;

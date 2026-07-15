@@ -85,7 +85,7 @@ export default function AuditsPage() {
         </CardHeader>
         <CardContent>
           <div className="text-center py-12 text-gray-500">
-            <FileSearch className="h-12 w-12 mx-auto mb-4 text-gray-600" />
+            <Search className="h-12 w-12 mx-auto mb-4 text-gray-600" />
             <p className="text-lg font-medium text-gray-400 mb-2">No audits yet</p>
             <p className="text-sm mb-4">Start your first security audit to analyze a smart contract.</p>
             <Link href="/audits/new">

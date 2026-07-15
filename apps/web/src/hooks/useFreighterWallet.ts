@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  getPublicKey,
-  signBlob,
+  getAddress,
+  signMessage as signFreighterMessage,
   isConnected as freighterIsConnected,
 } from "@stellar/freighter-api";
 
@@ -39,11 +39,11 @@ export function useFreighterWallet(): FreighterWallet {
     const checkConnection = async () => {
       if (!checkFreighterInstalled()) return;
       try {
-        const connected = await freighterIsConnected();
+        const { isConnected: connected } = await freighterIsConnected();
         if (connected) {
-          const publicKey = await getPublicKey();
-          if (publicKey) {
-            setState({ status: "connected", publicKey });
+          const result = await getAddress();
+          if (result?.address) {
+            setState({ status: "connected", publicKey: result.address });
           }
         }
       } catch {
@@ -62,12 +62,12 @@ export function useFreighterWallet(): FreighterWallet {
     setState({ status: "connecting" });
 
     try {
-      const publicKey = await getPublicKey();
-      if (!publicKey) {
+      const result = await getAddress();
+      if (!result?.address) {
         setState({ status: "error", message: "No public key returned" });
         return;
       }
-      setState({ status: "connected", publicKey });
+      setState({ status: "connected", publicKey: result.address });
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Failed to connect wallet";
@@ -88,15 +88,16 @@ export function useFreighterWallet(): FreighterWallet {
         throw new Error("Wallet not connected");
       }
 
-      // Freighter's signBlob expects a base64-encoded input string
-      const encodedMessage =
-        typeof btoa !== "undefined"
-          ? btoa(message)
-          : Buffer.from(message).toString("base64");
-
-      const signature = await signBlob(encodedMessage);
+      const result = await signFreighterMessage(message);
+      if (!result.signedMessage) {
+        throw new Error("No signature returned from Freighter");
+      }
+      const signedMessage =
+        typeof result.signedMessage === "string"
+          ? result.signedMessage
+          : Buffer.from(result.signedMessage).toString("base64");
       // Convert base64 signature to hex for backend compatibility
-      const sigBytes = Uint8Array.from(atob(signature), (c) => c.charCodeAt(0));
+      const sigBytes = Uint8Array.from(atob(signedMessage), (c) => c.charCodeAt(0));
       return Array.from(sigBytes)
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");

@@ -9,6 +9,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {

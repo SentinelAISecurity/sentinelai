@@ -1,0 +1,23 @@
+# SentinelAI Code Owners
+# Global maintainers
+* @sentinelai/core-team
+
+# Documentation
+*.md @sentinelai/docs-team
+docs/ @sentinelai/docs-team
+
+# Smart contracts
+packages/contracts/ @sentinelai/solidity-team
+
+# Python/API
+apps/api/ @sentinelai/backend-team
+
+# Frontend
+apps/web/ @sentinelai/frontend-team
+
+# Plugins
+plugins/ @sentinelai/security-team
+
+# CI/CD
+.github/workflows/ @sentinelai/devops-team
+docker/ @sentinelai/devops-team

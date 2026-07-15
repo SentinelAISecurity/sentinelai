@@ -1,0 +1,22 @@
+{
+  "name": "reentrancy-scanner",
+  "version": "1.0.0",
+  "type": "scanner",
+  "description": "Detects reentrancy vulnerabilities in Solidity smart contracts. Checks for external calls before state updates and missing reentrancy guards.",
+  "author": "SentinelAI",
+  "license": "Apache-2.0",
+  "severity": "CRITICAL",
+  "entryPoint": "scanner.py",
+  "dependencies": [],
+  "targets": ["solidity"],
+  "config": {
+    "enabled": true,
+    "timeout": 30000,
+    "maxMemory": 256,
+    "customSettings": {
+      "detectCEI": true,
+      "detectReadOnly": true,
+      "detectCrossFunction": true
+    }
+  }
+}

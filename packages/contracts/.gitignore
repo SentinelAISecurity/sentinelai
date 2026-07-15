@@ -1,0 +1,4 @@
+# Stellar Soroban build artifacts
+cache/
+target/
+out/

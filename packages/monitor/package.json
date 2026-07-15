@@ -1,0 +1,24 @@
+{
+  "name": "@sentinelai/monitor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Blockchain contract monitoring and alerting service",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@sentinelai/shared": "workspace:*",
+    "@stellar/stellar-sdk": "^12.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.4"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@sentinelai/report-generator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Audit report generation in Markdown, JSON, PDF, and HTML formats",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@sentinelai/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.4"
+  }
+}

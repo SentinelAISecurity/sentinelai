@@ -1,0 +1,22 @@
+{
+  "name": "access-control-scanner",
+  "version": "1.0.0",
+  "type": "scanner",
+  "description": "Detects missing or improper access control in Solidity smart contracts including tx.origin misuse, missing modifiers, and role-based control issues.",
+  "author": "SentinelAI",
+  "license": "Apache-2.0",
+  "severity": "HIGH",
+  "entryPoint": "scanner.py",
+  "dependencies": [],
+  "targets": ["solidity"],
+  "config": {
+    "enabled": true,
+    "timeout": 30000,
+    "maxMemory": 256,
+    "customSettings": {
+      "detectTxOrigin": true,
+      "detectMissingModifier": true,
+      "detectRoleEscalation": true
+    }
+  }
+}

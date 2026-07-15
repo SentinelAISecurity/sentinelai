@@ -1,0 +1,22 @@
+FROM node:20-slim
+
+WORKDIR /app
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copy workspace files
+COPY pnpm-workspace.yaml .
+COPY package.json pnpm-lock.yaml ./
+COPY turbo.json tsconfig.json ./
+
+# Copy all packages and apps
+COPY packages/ ./packages/
+COPY apps/web/ ./apps/web/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+EXPOSE 3000
+
+CMD ["pnpm", "dev", "--filter=@sentinelai/web"]

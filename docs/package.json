@@ -1,0 +1,15 @@
+{
+  "name": "@sentinelai/docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SentinelAI Documentation Site",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.3.3",
+    "vue": "^3.4.35"
+  }
+}

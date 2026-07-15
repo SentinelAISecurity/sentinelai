@@ -1,0 +1,71 @@
+name: "🔌 Plugin Proposal"
+description: "Propose a new security scanner plugin"
+title: "🔌 [Plugin]: "
+labels: ["plugin", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose a new security scanner plugin for SentinelAI.
+
+  - type: input
+    id: name
+    attributes:
+      label: "Plugin Name"
+      placeholder: "My Security Scanner"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: "What does this plugin do?"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: "Plugin Type"
+      options:
+        - "Scanner"
+        - "Analyzer"
+        - "Monitor"
+        - "Reporter"
+        - "Other"
+    validations:
+      required: true
+
+  - type: input
+    id: targets
+    attributes:
+      label: "Target Languages/Platforms"
+      placeholder: "Solidity, Vyper, Move"
+
+  - type: textarea
+    id: detection
+    attributes:
+      label: "Detection Capabilities"
+      description: "What vulnerabilities does this plugin detect?"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: "Default Severity"
+      options:
+        - "Critical"
+        - "High"
+        - "Medium"
+        - "Low"
+        - "Info"
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: "Dependencies"
+      description: "Any external tools or libraries required?"

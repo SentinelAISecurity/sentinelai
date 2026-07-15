@@ -1,0 +1,25 @@
+[package]
+name = "sentinelai-audit-registry"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.74"
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+testutils = ["soroban-sdk/testutils"]
+
+[dependencies]
+soroban-sdk = "21.0.1"
+
+[dev-dependencies]
+soroban-sdk = { version = "21.0.1", features = ["testutils"] }
+
+[profile.release]
+opt-level = "z"
+lto = true
+debug = 0
+strip = true
+codegen-units = 1
+panic = "abort"

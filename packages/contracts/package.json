@@ -1,0 +1,17 @@
+{
+  "name": "@sentinelai/contracts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SentinelAI Smart Contracts - Stellar Soroban Audit Registry",
+  "scripts": {
+    "build": "soroban contract build",
+    "test": "cargo test",
+    "test:cov": "cargo test",
+    "lint": "cargo clippy -- -D warnings",
+    "format": "cargo fmt",
+    "clean": "cargo clean && rm -rf target",
+    "deploy:testnet": "soroban contract deploy --network testnet --source-account alice --wasm target/wasm32-unknown-unknown/release/sentinelai_audit_registry.wasm",
+    "deploy:mainnet": "soroban contract deploy --network public --source-account deployer --wasm target/wasm32-unknown-unknown/release/sentinelai_audit_registry.wasm",
+    "install": "soroban contract install --network testnet --source alice --wasm target/wasm32-unknown-unknown/release/sentinelai_audit_registry.wasm"
+  }
+}

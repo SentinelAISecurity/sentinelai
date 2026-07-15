@@ -1,0 +1,49 @@
+name: "✨ Feature Request"
+description: "Suggest a new feature for SentinelAI"
+title: "✨ [Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! We appreciate your contribution.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Feature Description"
+      description: "Describe the feature you'd like to see"
+      placeholder: "I would like SentinelAI to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: "Use Case"
+      description: "Describe how this feature would be useful"
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: "Implementation Ideas"
+      description: "Optional: Any ideas on how to implement this?"
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority"
+      options:
+        - "Nice to Have"
+        - "Important"
+        - "Critical"
+
+  - type: checkboxes
+    id: willing
+    attributes:
+      label: "Contribution"
+      description: "Are you willing to contribute this feature?"
+      options:
+        - label: "I'm willing to submit a PR for this feature"

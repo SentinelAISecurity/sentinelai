@@ -1,0 +1,166 @@
+#![no_std]
+use soroban_sdk::{
+    contract, contractimpl, contracttype, symbol_short, vec, Address, BytesN, Env, Vec,
+};
+
+/// Key for storing records in persistent/instance storage
+#[contracttype]
+enum StorageKey {
+    TotalAudits,
+    AuditRecord(BytesN<32>),
+    ContractAudits(Address),
+}
+
+/// Represents a single audit record stored on-chain
+#[contracttype]
+#[derive(Clone)]
+pub struct AuditRecord {
+    pub contract_address: Address,
+    pub report_hash: BytesN<32>,
+    pub timestamp: u64,
+    pub auditor: Address,
+    pub security_score: u32,
+}
+
+/// SentinelAI Audit Registry — Stellar Soroban
+///
+/// On-chain registry on the Stellar network for storing and verifying
+/// smart contract audit proofs. Stores audit metadata including the audited
+/// contract address, IPFS report hash, auditor, timestamp, and security score.
+#[contract]
+pub struct AuditRegistry;
+
+#[contractimpl]
+impl AuditRegistry {
+    /// Register a new audit record on-chain.
+    ///
+    /// # Authentication
+    /// The caller (invoker) is recorded as the auditor and must authorize.
+    ///
+    /// # Arguments
+    /// * `contract_address` - The Stellar address of the audited contract
+    /// * `report_hash` - 32-byte IPFS content hash of the audit report
+    /// * `security_score` - Security score from 0 to 100
+    ///
+    /// # Returns
+    /// A unique 32-byte audit identifier (SHA-256 hash)
+    pub fn register_audit(
+        env: Env,
+        contract_address: Address,
+        report_hash: BytesN<32>,
+        security_score: u32,
+    ) -> BytesN<32> {
+        // Validate score range
+        assert!(security_score <= 100, "Score must be 0-100");
+
+        // The invoker is the auditor and must authorize this call
+        let auditor: Address = env.invoker().into();
+        auditor.require_auth();
+
+        let timestamp = env.ledger().timestamp();
+
+        // Generate a unique audit ID using SHA-256 of all inputs
+        // Encode: contract_address || report_hash || timestamp || auditor || score
+        let mut hash_input = soroban_sdk::vec![&env];
+        hash_input.push_back(contract_address.to_val());
+        hash_input.push_back(report_hash.to_val());
+        hash_input.push_back(timestamp.into_val(&env));
+        hash_input.push_back(auditor.to_val());
+        hash_input.push_back(security_score.into_val(&env));
+
+        let audit_id = env.crypto().sha256(&hash_input);
+
+        // Ensure audit doesn't already exist
+        let record_key = StorageKey::AuditRecord(audit_id.clone());
+        let exists: bool = env.storage().persistent().get(&record_key).is_some();
+        assert!(!exists, "Audit already exists");
+
+        // Create and store the audit record
+        let record = AuditRecord {
+            contract_address: contract_address.clone(),
+            report_hash: report_hash.clone(),
+            timestamp,
+            auditor: auditor.clone(),
+            security_score,
+        };
+
+        env.storage().persistent().set(&record_key, &record);
+
+        // Update contract-level audit list
+        let contract_key = StorageKey::ContractAudits(contract_address.clone());
+        let mut audits: Vec<BytesN<32>> = env
+            .storage()
+            .persistent()
+            .get(&contract_key)
+            .unwrap_or(vec![&env]);
+
+        audits.push_back(audit_id.clone());
+        env.storage().persistent().set(&contract_key, &audits);
+
+        // Increment total audits counter
+        let total_key = StorageKey::TotalAudits;
+        let total: u32 = env.storage().instance().get(&total_key).unwrap_or(0);
+        env.storage().instance().set(&total_key, &(total + 1));
+
+        // Emit event
+        env.events().publish(
+            (
+                symbol_short!("audit_reg"),
+                contract_address,
+                auditor,
+                record.security_score,
+            ),
+            audit_id.clone(),
+        );
+
+        audit_id
+    }
+
+    /// Verify that an audit record exists on-chain.
+    ///
+    /// Returns `false` if the audit does not exist (does NOT panic).
+    pub fn verify_audit(env: Env, audit_id: BytesN<32>) -> bool {
+        let record_key = StorageKey::AuditRecord(audit_id);
+        env.storage().persistent().get::<StorageKey, AuditRecord>(&record_key).is_some()
+    }
+
+    /// Retrieve an audit record by its ID.
+    ///
+    /// Panics if the audit does not exist.
+    pub fn get_audit(env: Env, audit_id: BytesN<32>) -> AuditRecord {
+        let record_key = StorageKey::AuditRecord(audit_id);
+        env.storage()
+            .persistent()
+            .get(&record_key)
+            .unwrap_or_else(|| panic!("Audit not found"))
+    }
+
+    /// Get all audit IDs for a specific contract address.
+    pub fn get_audits_by_contract(env: Env, contract_address: Address) -> Vec<BytesN<32>> {
+        let contract_key = StorageKey::ContractAudits(contract_address);
+        env.storage()
+            .persistent()
+            .get(&contract_key)
+            .unwrap_or(vec![&env])
+    }
+
+    /// Get the total count of registered audits.
+    pub fn get_audit_count(env: Env) -> u32 {
+        let total_key = StorageKey::TotalAudits;
+        env.storage().instance().get(&total_key).unwrap_or(0)
+    }
+
+    /// Get the number of audits for a specific contract.
+    pub fn get_contract_audit_count(env: Env, contract_address: Address) -> u32 {
+        let contract_key = StorageKey::ContractAudits(contract_address);
+        let audits: Vec<BytesN<32>> = env
+            .storage()
+            .persistent()
+            .get(&contract_key)
+            .unwrap_or(vec![&env]);
+        audits.len()
+    }
+}
+
+#[cfg(test)]
+mod test;

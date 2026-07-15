@@ -1,6 +1,7 @@
 #![no_std]
 use soroban_sdk::{
-    contract, contractimpl, contracttype, symbol_short, vec, Address, BytesN, Env, Vec,
+    contract, contractimpl, contracttype, symbol_short, vec, Address, Bytes, BytesN, Env, Vec,
+    xdr::ToXdr,
 };
 
 /// Key for storing records in persistent/instance storage
@@ -35,9 +36,10 @@ impl AuditRegistry {
     /// Register a new audit record on-chain.
     ///
     /// # Authentication
-    /// The caller (invoker) is recorded as the auditor and must authorize.
+    /// The auditor must be passed explicitly and must authorize.
     ///
     /// # Arguments
+    /// * `auditor` - The Stellar address of the auditor (must authorize)
     /// * `contract_address` - The Stellar address of the audited contract
     /// * `report_hash` - 32-byte IPFS content hash of the audit report
     /// * `security_score` - Security score from 0 to 100
@@ -46,6 +48,7 @@ impl AuditRegistry {
     /// A unique 32-byte audit identifier (SHA-256 hash)
     pub fn register_audit(
         env: Env,
+        auditor: Address,
         contract_address: Address,
         report_hash: BytesN<32>,
         security_score: u32,
@@ -53,22 +56,21 @@ impl AuditRegistry {
         // Validate score range
         assert!(security_score <= 100, "Score must be 0-100");
 
-        // The invoker is the auditor and must authorize this call
-        let auditor: Address = env.invoker().into();
+        // The auditor must authorize this call
         auditor.require_auth();
 
         let timestamp = env.ledger().timestamp();
 
-        // Generate a unique audit ID using SHA-256 of all inputs
-        // Encode: contract_address || report_hash || timestamp || auditor || score
-        let mut hash_input = soroban_sdk::vec![&env];
-        hash_input.push_back(contract_address.to_val());
-        hash_input.push_back(report_hash.to_val());
-        hash_input.push_back(timestamp.into_val(&env));
-        hash_input.push_back(auditor.to_val());
-        hash_input.push_back(security_score.into_val(&env));
-
-        let audit_id = env.crypto().sha256(&hash_input);
+        // Generate a unique audit ID using SHA-256 of XDR-serialized inputs
+        let payload = (
+            contract_address.clone(),
+            report_hash.clone(),
+            timestamp,
+            auditor.clone(),
+            security_score,
+        );
+        let xdr_bytes: Bytes = payload.to_xdr(&env).into();
+        let audit_id = env.crypto().sha256(&xdr_bytes);
 
         // Ensure audit doesn't already exist
         let record_key = StorageKey::AuditRecord(audit_id.clone());

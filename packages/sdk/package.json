@@ -12,7 +12,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.12",
+    "eslint": "^9.8.0",
     "typescript": "^5.5.4",
     "vitest": "^2.0.4",
     "@types/react": "^18.3.3"

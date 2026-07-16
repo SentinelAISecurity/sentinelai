@@ -1,6 +1,6 @@
 #![no_std]
 use soroban_sdk::{
-    contract, contractimpl, contracttype, symbol_short, vec, Address, Bytes, BytesN, Env,
+    contract, contractimpl, contracttype, symbol_short, vec, Address, BytesN, Env,
     IntoVal, TryIntoVal, Vec,
 };
 use soroban_sdk::xdr::{ScVal, ToXdr};
@@ -64,19 +64,17 @@ impl AuditRegistry {
 
         // Generate audit ID via SHA-256 of the ScVal-serialized tuple.
         // Individual SDK types don't implement ToXdr; we convert through ScVal.
-        let tuple_scval: ScVal = (
+        let tuple_val: soroban_sdk::Val = (
             contract_address.clone(),
             report_hash.clone(),
             timestamp,
             auditor.clone(),
             security_score,
         )
-            .into_val(&env)
-            .try_into_val(&env)
-            .unwrap();
-        let xdr_bytes = tuple_scval.to_xdr().unwrap();
-        let payload = Bytes::from_slice(&env, &xdr_bytes);
-        let audit_id = env.crypto().sha256(&payload);
+            .into_val(&env);
+        let tuple_scval: ScVal = tuple_val.try_into_val(&env).unwrap();
+        let payload = tuple_scval.to_xdr(&env);
+        let audit_id: BytesN<32> = env.crypto().sha256(&payload).into();
 
         // Build the audit record for storage
         let record = AuditRecord {
@@ -107,7 +105,7 @@ impl AuditRegistry {
 
         // Increment total audits counter
         let total_key = StorageKey::TotalAudits;
-        let total: u32 = env.storage().instance().get(&total_key).unwrap_or(0);
+        let total: u32 = env.storage().instance().get(&total_key).unwrap_or(0u32);
         env.storage().instance().set(&total_key, &(total + 1));
 
         // Emit event
@@ -155,7 +153,7 @@ impl AuditRegistry {
     /// Get the total count of registered audits.
     pub fn get_audit_count(env: Env) -> u32 {
         let total_key = StorageKey::TotalAudits;
-        env.storage().instance().get(&total_key).unwrap_or(0)
+        env.storage().instance().get(&total_key).unwrap_or(0u32)
     }
 
     /// Get the number of audits for a specific contract.

@@ -251,7 +251,7 @@ alerts
 
 ### Smart Contract Security
 - Follow Stellar standards
-- Comprehensive test suite with Foundry
+- Comprehensive test suite with `cargo test`
 - Formal verification (planned)
 - Upgradable patterns where appropriate
 

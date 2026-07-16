@@ -1,20 +1,16 @@
-#![cfg(test)]
-
 use super::*;
-use soroban_sdk::testutils::Address as _;
+use soroban_sdk::testutils::{Address as _, Ledger};
 
 #[test]
 fn test_register_audit() {
     let env = Env::default();
-    let contract_id = env.register(AuditRegistry, ());
+    env.mock_all_auths();
+    let contract_id = env.register_contract(None, AuditRegistry);
     let client = AuditRegistryClient::new(&env, &contract_id);
 
     let auditor = Address::generate(&env);
     let contract_addr = Address::generate(&env);
     let report_hash = BytesN::from_array(&env, &[1u8; 32]);
-
-    // Mock authorization
-    env.mock_all_auths();
 
     let audit_id = client.register_audit(&auditor, &contract_addr, &report_hash, &85);
 
@@ -33,14 +29,13 @@ fn test_register_audit() {
 #[test]
 fn test_register_multiple_audits() {
     let env = Env::default();
-    let contract_id = env.register(AuditRegistry, ());
+    env.mock_all_auths();
+    let contract_id = env.register_contract(None, AuditRegistry);
     let client = AuditRegistryClient::new(&env, &contract_id);
 
     let auditor = Address::generate(&env);
     let contract_addr = Address::generate(&env);
     let report_hash = BytesN::from_array(&env, &[1u8; 32]);
-
-    env.mock_all_auths();
 
     // Advance ledger between registrations to get unique timestamps
     env.ledger().with_mut(|li| {
@@ -69,14 +64,13 @@ fn test_register_multiple_audits() {
 #[should_panic(expected = "Score must be 0-100")]
 fn test_reject_invalid_score() {
     let env = Env::default();
-    let contract_id = env.register(AuditRegistry, ());
+    env.mock_all_auths();
+    let contract_id = env.register_contract(None, AuditRegistry);
     let client = AuditRegistryClient::new(&env, &contract_id);
 
     let auditor = Address::generate(&env);
     let contract_addr = Address::generate(&env);
     let report_hash = BytesN::from_array(&env, &[1u8; 32]);
-
-    env.mock_all_auths();
 
     client.register_audit(&auditor, &contract_addr, &report_hash, &101);
 }
@@ -84,7 +78,7 @@ fn test_reject_invalid_score() {
 #[test]
 fn test_get_audits_by_contract_empty() {
     let env = Env::default();
-    let contract_id = env.register(AuditRegistry, ());
+    let contract_id = env.register_contract(None, AuditRegistry);
     let client = AuditRegistryClient::new(&env, &contract_id);
 
     let contract_addr = Address::generate(&env);
@@ -97,7 +91,7 @@ fn test_get_audits_by_contract_empty() {
 #[test]
 fn test_verify_nonexistent_audit_returns_false() {
     let env = Env::default();
-    let contract_id = env.register(AuditRegistry, ());
+    let contract_id = env.register_contract(None, AuditRegistry);
     let client = AuditRegistryClient::new(&env, &contract_id);
 
     let fake_id = BytesN::from_array(&env, &[0u8; 32]);
@@ -108,15 +102,14 @@ fn test_verify_nonexistent_audit_returns_false() {
 #[test]
 fn test_different_contracts_have_separate_audits() {
     let env = Env::default();
-    let contract_id = env.register(AuditRegistry, ());
+    env.mock_all_auths();
+    let contract_id = env.register_contract(None, AuditRegistry);
     let client = AuditRegistryClient::new(&env, &contract_id);
 
     let auditor = Address::generate(&env);
     let contract_a = Address::generate(&env);
     let contract_b = Address::generate(&env);
     let report_hash = BytesN::from_array(&env, &[2u8; 32]);
-
-    env.mock_all_auths();
 
     client.register_audit(&auditor, &contract_a, &report_hash, &80);
     client.register_audit(&auditor, &contract_a, &report_hash, &60);

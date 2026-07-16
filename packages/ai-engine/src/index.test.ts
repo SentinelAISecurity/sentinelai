@@ -12,13 +12,13 @@ function createMockVulnerability(overrides: Partial<Vulnerability> = {}): Vulner
     severity: Severity.CRITICAL,
     category: VulnerabilityCategory.REENTRANCY,
     lineNumbers: [45, 46, 47],
-    fileName: "TokenVault.sol",
+    fileName: "TokenVault.rs",
     functionName: "withdraw",
     vulnerableCode:
-      'function withdraw() external {\n    (bool ok,) = msg.sender.call{value: balance}("");\n    require(ok);\n    balance = 0;\n}',
+      'fn withdraw(env: Env, to: Address, amount: i128) {\n    to.require_auth();\n    token::transfer(&env, &to, &amount);\n}',
     fixedCode:
-      'function withdraw() external nonReentrant {\n    uint256 amount = balance;\n    balance = 0;\n    (bool ok,) = msg.sender.call{value: amount}("");\n    require(ok);\n}',
-    references: ["https://docs.openzeppelin.com/contracts/4.x/api/security#ReentrancyGuard"],
+      'fn withdraw(env: Env, to: Address, amount: i128) {\n    to.require_auth();\n    token::transfer(&env, &to, &amount);\n}',
+    references: ["https://soroban.stellar.org/docs"],
     cvssScore: 9.8,
     exploitabilityScore: 9.0,
     confidence: 0.95,

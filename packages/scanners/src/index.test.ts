@@ -14,7 +14,7 @@ function createManifest(overrides: Partial<PluginManifest> = {}): PluginManifest
     severity: "HIGH",
     entryPoint: "scanner.py",
     dependencies: [],
-    targets: ["solidity"],
+    targets: ["soroban"],
     config: {
       enabled: true,
       timeout: 30000,
@@ -49,7 +49,7 @@ describe("SecurityPlugin", () => {
       expect(plugin.severity).toBe("HIGH");
       expect(plugin.entryPoint).toBe("scanner.py");
       expect(plugin.dependencies).toEqual([]);
-      expect(plugin.targets).toEqual(["solidity"]);
+      expect(plugin.targets).toEqual(["soroban"]);
     });
 
     it("should set isBuiltIn flag", () => {
@@ -99,7 +99,7 @@ describe("SecurityPlugin", () => {
   describe("analyze", () => {
     it("should return a successful PluginResult by default", async () => {
       const plugin = new SecurityPlugin(manifest);
-      const result = await plugin.analyze("pragma solidity ^0.8.0; contract Test {}");
+      const result = await plugin.analyze("fn test() {}");
 
       expect(result.success).toBe(true);
       expect(result.pluginId).toBe("plugin_test-scanner_1.0.0");

@@ -41,7 +41,7 @@ body:
     id: targets
     attributes:
       label: "Target Languages/Platforms"
-      placeholder: "Solidity, Vyper, Move"
+      placeholder: "Soroban, Rust, WebAssembly"
 
   - type: textarea
     id: detection

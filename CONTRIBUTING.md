@@ -33,7 +33,7 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 - **pnpm** >= 9.0.0
 - **Python** >= 3.12
 - **Docker** (optional but recommended)
-- **Foundry** (for smart contract development)
+- **Rust/Cargo** (for Soroban smart contract development)
 
 ### Setup
 
@@ -225,7 +225,7 @@ pnpm test --filter=@sentinelai/scanners
 cd apps/api && pytest
 
 # Run contract tests
-cd packages/contracts && forge test -vvv
+cd packages/contracts && cargo test
 
 # Run with coverage
 pnpm test:cov

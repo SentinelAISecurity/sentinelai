@@ -83,8 +83,7 @@ SentinelAI is under active development. This roadmap outlines our vision and pla
 - [ ] CLI tool (`sentinel scan`)
 - [ ] GitHub Action for CI integration
 - [ ] Pre-commit hooks
-- [ ] Hardhat plugin
-- [ ] Foundry plugin
+- [ ] Soroban CLI plugin
 
 ### Security Research
 - [ ] Formal verification integration

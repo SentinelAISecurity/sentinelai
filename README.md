@@ -141,7 +141,7 @@ SentinelAI is a **production-ready, open-source platform** that helps developers
 - **pnpm** >= 9.0.0
 - **Python** >= 3.12
 - **Docker** (optional, recommended)
-- **Foundry** (for smart contract development)
+- **Rust/Cargo** (for Soroban smart contract development)
 
 ### Quick Start (Docker)
 
@@ -181,17 +181,14 @@ uvicorn main:app --reload --port 8000
 ```bash
 cd packages/contracts
 
-# Install dependencies
-forge install Stellar/stellar-contracts
-
 # Build contracts
-forge build
+cargo build --target wasm32-unknown-unknown --release
 
 # Run tests
-forge test -vvv
+cargo test
 
-# Run coverage
-forge coverage
+# Lint
+cargo clippy -- -D warnings
 ```
 
 ## Project Structure
@@ -285,7 +282,7 @@ def create_plugin():
   "author": "Your Name",
   "severity": "HIGH",
   "entryPoint": "scanner.py",
-  "targets": ["Soroban"]
+  "targets": ["soroban"]
 }
 ```
 
@@ -316,7 +313,7 @@ curl -X POST http://localhost:8000/api/v1/audits \
   -d '{
     "contractId": "contract_001",
     "type": "file_upload",
-    "sourceCode": "pragma Soroban ^0.8.0; ..."
+    "sourceCode": "fn transfer(env: Env, from: Address, to: Address, amount: i128) { ... }"
   }'
 ```
 
@@ -336,14 +333,16 @@ Full API documentation available at `http://localhost:8000/api/docs`
 The AuditRegistry contract stores audit proofs on-chain for immutable verification.
 
 ```rust
-function registerAudit(
-    address contractAddress,
-    bytes32 reportHash,
-    uint8 securityScore
-) external returns (bytes32 auditId)
+pub fn register_audit(
+    env: Env,
+    auditor: Address,
+    contract_address: Address,
+    report_hash: BytesN<32>,
+    security_score: u32,
+) -> BytesN<32>
 
-function verifyAudit(bytes32 auditId) external view returns (bool)
-function getAudit(bytes32 auditId) external view returns (...)
+pub fn verify_audit(env: Env, audit_id: BytesN<32>) -> bool
+pub fn get_audit(env: Env, audit_id: BytesN<32>) -> AuditRecord
 ```
 
 ## Documentation

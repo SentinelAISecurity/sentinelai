@@ -6,8 +6,8 @@
 *.md @sentinelai/docs-team
 docs/ @sentinelai/docs-team
 
-# Smart contracts
-packages/contracts/ @sentinelai/solidity-team
+# Smart contracts (Stellar Soroban)
+packages/contracts/ @sentinelai/contracts-team
 
 # Python/API
 apps/api/ @sentinelai/backend-team

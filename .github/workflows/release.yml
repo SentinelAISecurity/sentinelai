@@ -40,7 +40,7 @@ jobs:
           git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --oneline > CHANGELOG.md
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           body_path: CHANGELOG.md
           generate_release_notes: true

@@ -17,7 +17,7 @@
   "dependencies": {
     "@sentinelai/shared": "workspace:*",
     "openai": "^4.53.0",
-    "@langchain/core": "^0.2.20"
+    "@langchain/core": "^1.2.3"
   },
   "devDependencies": {
     "@types/node": "^20.14.12",

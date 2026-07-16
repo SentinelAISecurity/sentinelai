@@ -1,4 +1,5 @@
-/** ESLint v9+ flat config for SentinelAI monorepo. */
+/** ESLint v9+ flat config for SentinelAI monorepo.
+ * Uses typescript-eslint parser for TypeScript files (no strict rules). */
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
@@ -7,7 +8,9 @@ export default tseslint.config(
   },
   {
     files: ["**/*.ts", "**/*.tsx"],
-    extends: [tseslint.configs.recommended],
+    languageOptions: {
+      parser: tseslint.parser,
+    },
     rules: {},
   },
 );

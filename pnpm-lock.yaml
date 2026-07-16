@@ -105,6 +105,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.19
         version: 10.5.3(postcss@8.5.19)
+      eslint:
+        specifier: ^9.8.0
+        version: 9.39.5(jiti@1.21.7)
       postcss:
         specifier: ^8.4.40
         version: 8.5.19
